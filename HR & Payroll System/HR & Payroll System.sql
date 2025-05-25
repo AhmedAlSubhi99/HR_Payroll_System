@@ -139,3 +139,31 @@ FROM Payroll p
 JOIN Employees e ON p.E_ID = e.E_ID
 ORDER BY p.PayEnd DESC;
 
+-- Employee Leave Requests and Bonuses
+SELECT e.E_ID, e.FName + ' ' + e.LName AS EmployeeName, 'Leave Request' AS ActionType, l.StartDate AS ActionDate, l.LeaveType AS Description, NULL AS Amount
+FROM Leaves l
+JOIN Employees e ON l.E_ID = e.E_ID
+UNION
+SELECT e.E_ID, e.FName + ' ' + e.LName AS EmployeeName, 'Bonus Given' AS ActionType, b.DateGiven AS ActionDate, b.Reason AS Description, b.Amount
+FROM Bonuses b
+JOIN Employees e ON b.E_ID = e.E_ID
+ORDER BY ActionDate DESC;
+
+-- Insert Bonus And Payroll together 
+
+BEGIN TRY
+BEGIN TRANSACTION;
+-- Insert Bonus
+INSERT INTO Bonuses (E_ID, Amount, Reason, DateGiven)
+VALUES (1, 120.000, 'Quarterly Incentive', GETDATE());
+-- Update Payroll
+UPDATE Payroll
+SET BonusAmount = BonusAmount + 120.000, TotalPay = TotalPay + 120.000
+WHERE E_ID = 1 AND PayStart = '2025-05-01' AND PayEnd = '2025-05-15';
+COMMIT;
+END TRY
+BEGIN CATCH
+ROLLBACK;
+Select ERROR_LINE(), ERROR_MESSAGE(), ERROR_NUMBER();
+END CATCH;
+
