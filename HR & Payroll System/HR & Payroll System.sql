@@ -102,10 +102,40 @@ INSERT INTO Bonuses (E_ID, Amount, Reason, DateGiven) VALUES
 (1, 100.000, 'Excellent Performance', '2025-05-05'),
 (3, 150.000, 'Project Completion Bonus', '2025-05-07');
 
+Truncate Table Payroll;
 -- Data for Payroll
 INSERT INTO Payroll (E_ID, PayStart, PayEnd, BasicSalary, BonusAmount, Deductions, TotalPay) VALUES
 (1, '2025-05-01', '2025-05-15', 425.000, 100.000, 20.000, 505.000),
-(2, '2025-05-01', '2025-05-15', 475.000, 0.000, 15.000, 460.000),
-(3, '2025-05-01', '2025-05-15', 550.000, 150.000, 30.000, 670.000),
-(4, '2025-05-01', '2025-05-15', 390.000, 0.000, 10.000, 380.000);
+(2, '2025-05-01', '2025-05-16', 475.000, 0.000, 15.000, 460.000),
+(3, '2025-05-01', '2025-05-17', 550.000, 150.000, 30.000, 670.000),
+(4, '2025-05-01', '2025-05-18', 390.000, 0.000, 10.000, 380.000);
+
+-- Display All Employees with Department
+SELECT e.E_ID,e.FName + ' ' + e.LName AS FullName, e.Email,e.Phone,e.HireDate,d.D_Name, e.Salary
+FROM Employees e
+JOIN Departments d ON e.D_ID = d.D_ID;
+
+-- Display Attendance Records
+SELECT a.A_ID, e.FName + ' ' + e.LName AS EmployeeName, a.Date, a.Status
+FROM Attendance a
+JOIN Employees e ON a.E_ID = e.E_ID
+ORDER BY a.Date, EmployeeName;
+
+-- Display Leave Requests
+SELECT l.L_ID, e.FName + ' ' + e.LName AS EmployeeName, l.LeaveType, l.StartDate, l.EndDate, l.Status
+FROM Leaves l
+JOIN Employees e ON l.E_ID = e.E_ID
+ORDER BY l.StartDate;
+
+-- Display Bonuses
+SELECT b.B_ID, e.FName + ' ' + e.LName AS EmployeeName, b.Amount, b.Reason, b.DateGiven
+FROM Bonuses b
+JOIN Employees e ON b.E_ID = e.E_ID
+ORDER BY b.DateGiven DESC;
+
+-- Display Payroll Summary
+SELECT p.P_ID, e.FName + ' ' + e.LName AS EmployeeName, p.PayStart, p.PayEnd, p.BasicSalary, p.BonusAmount, p.Deductions, p.TotalPay
+FROM Payroll p
+JOIN Employees e ON p.E_ID = e.E_ID
+ORDER BY p.PayEnd DESC;
 
